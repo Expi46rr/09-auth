@@ -7,7 +7,7 @@ import Pagination from "../../components/Pagination/Pagination";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import Modal from "../../components/Modal/Modal";
 import NoteForm from "../../components/NoteForm/NoteForm";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { fetchNotes } from "../../lib/api";
 import NoteList from "../../components/NoteList/NoteList";
 import { useDebouncedCallback } from "use-debounce";
@@ -19,7 +19,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [page, setCurrentPage] = useState(1);
 
-  const { data, isLoading, isError, isSuccess, isFetching } = useQuery({
+  const { data, isLoading, isSuccess, isFetching } = useQuery({
     queryKey: ["notes", page, query],
     queryFn: () =>
       fetchNotes({
