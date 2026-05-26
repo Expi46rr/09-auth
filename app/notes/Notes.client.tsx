@@ -17,7 +17,7 @@ function App() {
   const [createNoteThis, setCreateNoteThis] = useState(false);
   const [input, setInput] = useState("");
   const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
+  const [page, setCurrentPage] = useState(1);
 
   const { data, isLoading, isError, isSuccess, isFetching } = useQuery({
     queryKey: ["notes", page, query],
@@ -42,15 +42,13 @@ function App() {
     setCreateNoteThis(false);
   };
 
-  //   useEffect(() => {
-  //     if (data?.notes && data.notes.length === 0) {
-  //       NoFoundError();
-  //     }
-  //   }, [data]);
+  // useEffect(() => {
+  //   if (data?.notes && data.notes.length === 0) {
+  //     NoFoundError();
+  //   }
+  // }, [data]);
 
-  //   useEffect(() => {
-  //     setPage(1);
-  //   }, [query]);
+  // useEffect(() => {}, [query]);
 
   const totalPages = data?.totalPages ?? 0;
 
@@ -62,11 +60,16 @@ function App() {
           onChange={(val) => {
             setInput(val);
             debouncedSetQuery(val);
+            setCurrentPage(1);
           }}
         />
 
         {isSuccess && totalPages > 1 && (
-          <Pagination totalPages={totalPages} page={page} setPage={setPage} />
+          <Pagination
+            totalPages={totalPages}
+            page={page}
+            setPage={setCurrentPage}
+          />
         )}
 
         <button className={css.button} onClick={openModal}>

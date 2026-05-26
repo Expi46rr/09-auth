@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import { getSingleNote } from "@/lib/api";
 import NoteDetailsClient from "./NoteDetails.client";
+import { notFound } from "next/navigation";
 
 type Props = {
   params: Promise<{ id: string }>;
