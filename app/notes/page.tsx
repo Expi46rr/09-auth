@@ -3,9 +3,9 @@ import {
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import css from "./filter/[...filters]/Notes.module.css";
+import css from "./filter/[...slug]/Notes.module.css";
 import { fetchNotes } from "../../lib/api";
-import NotesClient from "./filter/[...filters]/Notes.client";
+import NotesClient from "./filter/[...slug]/Notes.client";
 
 async function App() {
   const queryClient = new QueryClient();

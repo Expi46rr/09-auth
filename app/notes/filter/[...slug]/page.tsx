@@ -1,4 +1,4 @@
-import css from "../[...filters]/Notes.module.css";
+import css from "../[...slug]/Notes.module.css";
 import { fetchNotes } from "../../../../lib/api";
 import NotesClient from "./Notes.client";
 import {
@@ -8,17 +8,15 @@ import {
 } from "@tanstack/react-query";
 import { NoteTag } from "@/types/note";
 type Props = {
-  params: { filters: string[] };
+  params: { slug: string[] };
 };
 export default async function NotesPage({ params }: Props) {
   const queryClient = new QueryClient();
 
-  const { filters } = await params;
+  const { slug } = await params;
 
   const tag: NoteTag | undefined =
-    filters?.[0] && filters?.[0] !== "all"
-      ? (filters?.[0] as NoteTag)
-      : undefined;
+    slug?.[0] && slug?.[0] !== "all" ? (slug?.[0] as NoteTag) : undefined;
 
   await queryClient.prefetchQuery({
     queryKey: ["notes", 1, tag],
