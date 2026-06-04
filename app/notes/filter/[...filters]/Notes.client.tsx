@@ -1,31 +1,35 @@
 "use client";
+import "modern-normalize";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import css from "./Notes.module.css";
-// import Loader from "../Loader/Loader";
-// import ErrorMessage from "../Error/error";
-import Pagination from "../../components/Pagination/Pagination";
-import SearchBox from "../../components/SearchBox/SearchBox";
-import Modal from "../../components/Modal/Modal";
-import NoteForm from "../../components/NoteForm/NoteForm";
+import Pagination from "../../../../components/Pagination/Pagination";
+import SearchBox from "../../../../components/SearchBox/SearchBox";
+import Modal from "../../../../components/Modal/Modal";
+import NoteForm from "../../../../components/NoteForm/NoteForm";
 import { useState } from "react";
-import { fetchNotes } from "../../lib/api";
-import NoteList from "../../components/NoteList/NoteList";
+import { fetchNotes } from "../../../../lib/api";
+import NoteList from "../../../../components/NoteList/NoteList";
 import { useDebouncedCallback } from "use-debounce";
 import { Toaster } from "react-hot-toast";
+import { NoteTag } from "@/types/note";
 
-function App() {
+type Props = {
+  tag?: NoteTag;
+};
+function App({ tag }: Props) {
   const [createNoteThis, setCreateNoteThis] = useState(false);
   const [input, setInput] = useState("");
-  const [query, setQuery] = useState("");
-  const [page, setCurrentPage] = useState(1);
+  const [querySe, setQuery] = useState("");
+  const [page, setPage] = useState(1);
 
   const { data, isLoading, isSuccess, isFetching } = useQuery({
-    queryKey: ["notes", page, query],
+    queryKey: ["notes", { page, querySe, tag }],
     queryFn: () =>
       fetchNotes({
         page,
-        search: query || undefined,
+        search: querySe || undefined,
         perPage: 12,
+        tag: tag,
       }),
     placeholderData: keepPreviousData,
   });
@@ -42,15 +46,10 @@ function App() {
     setCreateNoteThis(false);
   };
 
-  // useEffect(() => {
-  //   if (data?.notes && data.notes.length === 0) {
-  //     NoFoundError();
-  //   }
-  // }, [data]);
-
-  // useEffect(() => {}, [query]);
-
   const totalPages = data?.totalPages ?? 0;
+  const notes = data?.notes ?? [];
+
+  const isEmpty = isSuccess && notes.length === 0;
 
   return (
     <div className={css.app}>
@@ -60,16 +59,12 @@ function App() {
           onChange={(val) => {
             setInput(val);
             debouncedSetQuery(val);
-            setCurrentPage(1);
+            setPage(1);
           }}
         />
 
         {isSuccess && totalPages > 1 && (
-          <Pagination
-            totalPages={totalPages}
-            page={page}
-            setPage={setCurrentPage}
-          />
+          <Pagination totalPages={totalPages} page={page} setPage={setPage} />
         )}
 
         <button className={css.button} onClick={openModal}>
@@ -77,11 +72,15 @@ function App() {
         </button>
       </header>
 
-      {/* {(isLoading || isFetching) && <Loader />}
-      {isError && <ErrorMessage />} */}
-
-      {!isLoading && !isFetching && isSuccess && data.notes.length > 0 && (
-        <NoteList notes={data.notes} />
+      {isEmpty ? (
+        <p>
+          {tag || querySe ? "No notes found for this filter" : "No notes yet"}
+        </p>
+      ) : (
+        !isLoading &&
+        !isFetching &&
+        isSuccess &&
+        data.notes.length > 0 && <NoteList notes={data.notes} />
       )}
 
       <Toaster position="top-center" reverseOrder={false} />

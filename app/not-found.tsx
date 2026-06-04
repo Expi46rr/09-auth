@@ -1,4 +1,4 @@
-import css from "./page.module.css";
+import css from "./Home.module.css";
 
 // app/not-found.tsx
 const NotFound = () => {
