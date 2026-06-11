@@ -12,11 +12,11 @@ interface NotesResponse {
   notes: Note[];
   totalPages: number;
 }
-interface CreateNoteDto {
+export type NotesCreate = {
   title: string;
   content: string;
   tag: NoteTag;
-}
+};
 
 const NEXT_PUBLIC_NOTEHUB_TOKEN = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;
 
@@ -43,7 +43,7 @@ export const fetchNotes = async ({
   });
   return data;
 };
-export const createNote = async (note: CreateNoteDto): Promise<Note> => {
+export const createNote = async (note: NotesCreate): Promise<Note> => {
   const { data } = await api.post<Note>("/notes", note);
   return data;
 };
