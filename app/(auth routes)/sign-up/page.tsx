@@ -1,26 +1,27 @@
 "use client";
-import { useRouter } from "next/navigation";
 import css from "./SignUpPage.module.css";
-import { login } from "@/lib/api/clientApi";
-import { useState } from "react";
-import { ApiError } from "../../../types/note";
-import { useAuthStore } from "@/lib/store/authStore";
 type NoteFormValues = {
   email: string;
   password: string;
 };
-
-export default function SignIn() {
-  const [, setError] = useState("");
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { register } from "@/lib/api/clientApi";
+import { useAuthStore } from "@/lib/store/authStore";
+import { ApiError } from "@/types/note";
+export default function SignUp() {
   const router = useRouter();
+  const [error, setError] = useState("");
+  // Отримуємо метод із стора
   const setUser = useAuthStore((state) => state.setUser);
-  const handleSubmit = async (formData: FormData) => {
-    const values = Object.fromEntries(formData) as NoteFormValues;
 
+  const handleSubmit = async (formData: FormData) => {
     try {
-      const user = await login(values);
-      if (user) {
-        setUser(user);
+      const formValues = Object.fromEntries(formData) as NoteFormValues;
+      const res = await register(formValues);
+      if (res) {
+        // Записуємо користувача у глобальний стан
+        setUser(res);
         router.push("/profile");
       } else {
         setError("Invalid email or password");
@@ -33,11 +34,11 @@ export default function SignIn() {
       );
     }
   };
+
   return (
     <main className={css.mainContent}>
+      <h1 className={css.formTitle}>Sign up</h1>
       <form className={css.form} action={handleSubmit}>
-        <h1 className={css.formTitle}>Sign in</h1>
-
         <div className={css.formGroup}>
           <label htmlFor="email">Email</label>
           <input
@@ -62,9 +63,11 @@ export default function SignIn() {
 
         <div className={css.actions}>
           <button type="submit" className={css.submitButton}>
-            Log in
+            Register
           </button>
         </div>
+
+        {error && <p className={css.error}>{error}</p>}
       </form>
     </main>
   );
