@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import css from "./SignInPage.module.css";
+import css from "./SignUpPage.module.css";
 import { login } from "@/lib/api/clientApi";
 import { useState } from "react";
 import { ApiError } from "../../../types/note";
@@ -11,7 +11,7 @@ type NoteFormValues = {
 };
 
 export default function SignIn() {
-  const [error, setError] = useState("");
+  const [, setError] = useState("");
   const router = useRouter();
   const setUser = useAuthStore((state) => state.setUser);
   const handleSubmit = async (formData: FormData) => {
