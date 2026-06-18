@@ -8,7 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: "Create note",
       description: "Create a new note",
-      url: "https://08-zustand-eight-jet.vercel.app/notes/action/create",
+      url: "https://09-auth-seven-sandy.vercel.app/notes/action/create",
       siteName: "NoteHub",
       images: [
         {
@@ -22,7 +22,6 @@ export async function generateMetadata(): Promise<Metadata> {
     },
   };
 }
-
 export default function CreateNote() {
   return (
     <main className={css.main}>

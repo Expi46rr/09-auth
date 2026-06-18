@@ -1,24 +1,22 @@
 "use client";
-import "modern-normalize";
+
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import css from "./Notes.module.css";
-import Pagination from "../../../../components/Pagination/Pagination";
-import SearchBox from "../../../../components/SearchBox/SearchBox";
-// import Modal from "../../../../components/Modal/Modal";
-// import NoteForm from "../../../../components/NoteForm/NoteForm";
+import Pagination from "../../../../../components/Pagination/Pagination";
+import SearchBox from "../../../../../components/SearchBox/SearchBox";
 import { useState } from "react";
-import { fetchNotes } from "../../../../lib/api";
-import NoteList from "../../../../components/NoteList/NoteList";
+import { fetchNotes } from "../../../../../lib/api/clientApi";
+import NoteList from "../../../../../components/NoteList/NoteList";
 import { useDebouncedCallback } from "use-debounce";
 import { Toaster } from "react-hot-toast";
 import { NoteTag } from "@/types/note";
 import Link from "next/link";
+import { useAuthStore } from "@/lib/store/authStore";
 
 type Props = {
   tag?: NoteTag;
 };
-function App({ tag }: Props) {
-  // const [createNoteThis, setCreateNoteThis] = useState(false);
+function Notes({ tag }: Props) {
   const [input, setInput] = useState("");
   const [querySe, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -39,18 +37,12 @@ function App({ tag }: Props) {
     setQuery(value);
   }, 500);
 
-  // const openModal = () => {
-  //   setCreateNoteThis(true);
-  // };
-
-  // const closeModal = () => {
-  //   setCreateNoteThis(false);
-  // };
-
   const totalPages = data?.totalPages ?? 0;
   const notes = data?.notes ?? [];
 
   const isEmpty = isSuccess && notes.length === 0;
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 
   return (
     <div className={css.app}>
@@ -67,13 +59,13 @@ function App({ tag }: Props) {
         {isSuccess && totalPages > 1 && (
           <Pagination totalPages={totalPages} page={page} setPage={setPage} />
         )}
-
         <Link className={css.button} href="/notes/action/create">
           Create note +
         </Link>
       </header>
-
-      {isEmpty ? (
+      {!isAuthenticated ? (
+        <p>Please login</p>
+      ) : isEmpty ? (
         <p>
           {tag || querySe ? "No notes found for this filter" : "No notes yet"}
         </p>
@@ -85,14 +77,8 @@ function App({ tag }: Props) {
       )}
 
       <Toaster position="top-center" reverseOrder={false} />
-
-      {/* {createNoteThis && (
-        <Modal onClose={closeModal}>
-          <NoteForm onClose={closeModal} />
-        </Modal>
-      )} */}
     </div>
   );
 }
 
-export default App;
+export default Notes;

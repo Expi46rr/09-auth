@@ -3,21 +3,27 @@ import {
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
-import { getSingleNote } from "@/lib/api";
-import NoteDetailsClient from "./NoteDetails.client";
-import { Metadata } from "next";
+import { fetchNoteById } from "@/lib/api/serverApi";
+import type { Metadata } from "next";
+import NotePreviewClient from "../../../@modal/(.)notes/[id]/NotePreview.client";
 
 type Props = {
   params: Promise<{ id: string }>;
 };
-export const generateMetadata = async ({
+type GenerateMetadataProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+export async function generateMetadata({
   params,
-}: Props): Promise<Metadata> => {
+}: GenerateMetadataProps): Promise<Metadata> {
   const { id } = await params;
-  const note = await getSingleNote(id);
+  const note = await fetchNoteById(id);
   return {
-    title: note.title,
-    description: note.content,
+    title: `${note.title}`,
+    description: `${note.content.slice(0, 100)}...`,
     openGraph: {
       title: `${note.title}`,
       description: `${note.content.slice(0, 100)}...`,
@@ -34,7 +40,7 @@ export const generateMetadata = async ({
       type: "article",
     },
   };
-};
+}
 
 const NoteDetails = async ({ params }: Props) => {
   const { id } = await params;
@@ -42,12 +48,12 @@ const NoteDetails = async ({ params }: Props) => {
 
   await queryClient.prefetchQuery({
     queryKey: ["note", id],
-    queryFn: () => getSingleNote(id),
+    queryFn: () => fetchNoteById(id),
   });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <NoteDetailsClient />
+      <NotePreviewClient />
     </HydrationBoundary>
   );
 };

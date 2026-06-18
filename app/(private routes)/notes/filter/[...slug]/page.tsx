@@ -1,27 +1,32 @@
 import css from "../[...slug]/Notes.module.css";
-import { fetchNotes } from "../../../../lib/api";
+import { fetchNotes } from "../../../../../lib/api/serverApi";
 import NotesClient from "./Notes.client";
+import type { Metadata } from "next";
 import {
   HydrationBoundary,
   QueryClient,
   dehydrate,
 } from "@tanstack/react-query";
 import { NoteTag } from "@/types/note";
-import { Metadata } from "next";
 type Props = {
   params: { slug: string[] };
 };
-export const generateMetadata = async ({
-  params,
-}: Props): Promise<Metadata> => {
-  const { slug } = await params;
+type GenerateMetadataProps = {
+  params: Promise<{
+    slug: string[];
+  }>;
+};
 
+export async function generateMetadata({
+  params,
+}: GenerateMetadataProps): Promise<Metadata> {
+  const { slug } = await params;
   return {
     title: `Note: ${slug.join("/")}`,
-    description: `Note: ${slug.join("/")}`,
+    description: `Note by: ${slug.join("/")}`,
     openGraph: {
       title: `Note: ${slug.join("/")}`,
-      description: `Note: ${slug.join("/")}`,
+      description: `Note by: ${slug.join("/")}`,
       url: `/notes/filter/${slug.join("/")}`,
       siteName: "NoteHub",
       images: [
@@ -35,7 +40,7 @@ export const generateMetadata = async ({
       type: "article",
     },
   };
-};
+}
 
 export default async function NotesPage({ params }: Props) {
   const queryClient = new QueryClient();

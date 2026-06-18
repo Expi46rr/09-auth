@@ -1,7 +1,6 @@
 import { create } from "zustand";
-
+import { NotesCreate } from "../api/clientApi";
 import { persist } from "zustand/middleware";
-import { NotesCreate } from "../api";
 
 type NoteDraftStore = {
   draft: NotesCreate;

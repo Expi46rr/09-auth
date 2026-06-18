@@ -8,3 +8,12 @@ export interface Note {
   updatedAt: string;
   tag: NoteTag;
 }
+
+export interface ApiError {
+  message: string;
+  response?: {
+    data?: {
+      error?: string;
+    };
+  };
+}

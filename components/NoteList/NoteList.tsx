@@ -1,8 +1,9 @@
 import css from "./NoteList.module.css";
 import { type Note } from "../../types/note";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { deleteNote } from "../../lib/api";
+
 import Link from "next/link";
+import { deleteNote } from "@/lib/api/clientApi";
 
 interface NoteListProps {
   notes: Note[];
@@ -24,23 +25,21 @@ export default function NoteList({ notes }: NoteListProps) {
 
   return (
     <ul className={css.list}>
-      {notes.map((item) => (
-        <li key={item.id} className={css.listItem}>
-          <h2 className={css.title}>{item.title}</h2>
-
-          <p className={css.content}>{item.content}</p>
-
+      {notes.map((note) => (
+        <li className={css.listItem} key={note.id}>
+          <h2 className={css.title}>{note.title}</h2>
+          <p className={css.content}>{note.content}</p>
           <div className={css.footer}>
-            <span className={css.tag}>{item.tag}</span>
-            <Link href={`/notes/${item.id}`} className={css.link}>
+            <span className={css.tag}>{note.tag}</span>
+            <Link href={`/notes/${note.id}`} className={css.link}>
               View details
             </Link>
             <button
               className={css.button}
-              onClick={() => handleDelete(item.id)}
+              onClick={() => handleDelete(note.id)}
               disabled={mutation.isPending}
             >
-              {mutation.isPending ? "Deleting..." : "Delete"}
+              Delete
             </button>
           </div>
         </li>
